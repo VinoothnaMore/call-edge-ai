@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+/* ─── Tailwind v4 theme — replaces tailwind.config.js in v4 ─────────────── */
+@theme {
+  --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --font-sans: 'DM Sans', system-ui, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ─── Design token layer ─────────────────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --bg-base:     #0F172A;
+  --bg-surface:  #1E293B;
+  --bg-elevated: #263348;
+  --bg-input:    #1A2942;
+
+  /* Accent — gold/amber */
+  --accent-gold:       #F59E0B;
+  --accent-gold-hover: #D97706;
+  --accent-gold-muted: rgba(245, 158, 11, 0.12);
+
+  /* Text */
+  --text-primary:   #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted:     #475569;
+
+  /* Borders */
+  --border-subtle:  rgba(148, 163, 184, 0.10);
+  --border-default: rgba(148, 163, 184, 0.18);
+  --border-active:  rgba(245, 158, 11, 0.50);
+
+  /* Semantic */
+  --success:       #10B981;
+  --success-muted: rgba(16, 185, 129, 0.10);
+  --danger:        #F43F5E;
+  --danger-muted:  rgba(244, 63, 94, 0.10);
+}
+
+/* ─── Global resets & base styles ───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3 { margin: 0; font-weight: inherit; }
+p { margin: 0; }
+
+/* Tabular numerals on all numeric data elements */
+[data-numeric],
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* Thin dark scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+/* Remove number input spinners */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
+
+/* ─── Animation keyframes ────────────────────────────────────────────────── */
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fade-up-card {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes msg-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Prediction card: slide from right on desktop, fade up on mobile */
+.prediction-enter { opacity: 0; }
+@media (min-width: 1024px) {
+  .prediction-enter { animation: slide-in-right 400ms ease-out forwards; }
+}
+@media (max-width: 1023px) {
+  .prediction-enter { animation: fade-up-card 400ms ease-out forwards; }
+}
+
+/* Chat message bubble entrance */
+.msg-enter { animation: msg-enter 200ms ease-out both; }
