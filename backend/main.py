@@ -20,9 +20,14 @@ app = FastAPI(
     version="0.1.0",
 )
 
+_allowed_origins = ["https://call-edge-ai.vercel.app", "http://localhost:5173"]
+if _env := os.getenv("FRONTEND_URL", "").strip():
+    if _env not in _allowed_origins:
+        _allowed_origins.append(_env)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("FRONTEND_URL", "https://call-edge-ai.vercel.app")],
+    allow_origins=_allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
