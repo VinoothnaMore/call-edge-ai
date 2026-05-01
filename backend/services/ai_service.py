@@ -2,8 +2,17 @@ import os
 from google import genai
 from google.genai import types
 
-# new google-genai SDK uses Client, not genai.configure()
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+_client: genai.Client | None = None
+
+
+def _get_client() -> genai.Client:
+    global _client
+    if _client is None:
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            raise RuntimeError("GEMINI_API_KEY environment variable is not set.")
+        _client = genai.Client(api_key=api_key)
+    return _client
 
 _MODEL = "gemini-2.5-flash"
 
@@ -31,7 +40,7 @@ def stream_explanation(customer_profile: dict, label: str, confidence: float):
     )
     try:
         # new SDK: client.models.generate_content_stream() instead of model.generate_content(stream=True)
-        for chunk in client.models.generate_content_stream(
+        for chunk in _get_client().models.generate_content_stream(
             model=_MODEL,
             contents=prompt,
             config=types.GenerateContentConfig(system_instruction=_EXPLAIN_SYSTEM),
@@ -53,7 +62,7 @@ def stream_chat(customer_profile: dict, label: str, confidence: float, messages:
     # Convert OpenAI-style messages to Gemini history format.
     # Gemini uses "model" where OpenAI uses "assistant".
     # All messages except the last become history; the last is sent now.
-    history = [
+    history: list[types.ContentOrDict] = [
         types.Content(
             role="model" if msg["role"] == "assistant" else msg["role"],
             parts=[types.Part(text=msg["content"])],
@@ -64,7 +73,7 @@ def stream_chat(customer_profile: dict, label: str, confidence: float, messages:
 
     try:
         # new SDK: client.chats.create() instead of model.start_chat()
-        chat = client.chats.create(
+        chat = _get_client().chats.create(
             model=_MODEL,
             config=types.GenerateContentConfig(system_instruction=system_instruction),
             history=history,
